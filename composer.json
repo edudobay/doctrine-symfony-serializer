@@ -1,0 +1,41 @@
+{
+    "name": "edudobay/doctrine-symfony-serializer",
+    "type": "library",
+    "require": {
+        "php": "^8.0",
+        "doctrine/dbal": "^3.2",
+        "doctrine/event-manager": "^1.1",
+        "doctrine/orm": "^2.10",
+        "symfony/serializer": "^6.0"
+    },
+    "require-dev": {
+        "phpdocumentor/reflection-docblock": "^5.3",
+        "psr/cache": "^3.0",
+        "symfony/cache": "^6.0",
+        "symfony/property-access": "^6.0",
+        "symfony/property-info": "^6.0"
+    },
+    "autoload": {
+        "exclude-from-classmap": ["/tests/", "/src/Examples/"],
+        "psr-4": {
+            "Edudobay\\DoctrineSerializable\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Edudobay\\DoctrineSerializable\\Tests\\": "tests/"
+        }
+    },
+    "suggest": {
+        "psr/cache": "To support metadata caching"
+    },
+    "authors": [
+        {
+            "name": "Eduardo Dobay",
+            "email": "edudobay@gmail.com"
+        }
+    ],
+    "config": {
+        "sort-packages": true
+    }
+}

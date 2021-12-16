@@ -1,0 +1,6 @@
+/vendor/
+/tools/
+/var/
+*.cache
+
+composer.lock
