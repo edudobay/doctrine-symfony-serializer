@@ -4,6 +4,10 @@ This is a proof of concept for a mapping fields with [Doctrine ORM][doctrine-orm
 
 Sometimes you just need to store a data type in a JSON field and not worry about database schemas, extra columns or tables, [Doctrine embeddables][doctrine-orm-embeddables], [custom mappings][doctrine-orm-mapping-types].
 
+## Examples
+
+See the [examples](./examples/main.php) directory.
+
 
 [doctrine-orm]: https://www.doctrine-project.org/projects/doctrine-orm/en/2.10/index.html
 [doctrine-orm-embeddables]: https://www.doctrine-project.org/projects/doctrine-orm/en/2.10/tutorials/embeddables.html
