@@ -13,7 +13,7 @@ class Psr6CacheClassMetadataFactory implements ClassMetadataFactoryInterface
     public function __construct(
         private CacheItemPoolInterface $cache,
         private ClassMetadataFactoryInterface $factory,
-        private string $keyPrefix = '',
+        private string $keyPrefix = __NAMESPACE__ . '_classMetadata_',
     ) {
     }
 
@@ -21,7 +21,7 @@ class Psr6CacheClassMetadataFactory implements ClassMetadataFactoryInterface
     {
         // Remember that characters \ and @ (present in class names through namespace separators and anonymous class markers)
         // are reserved by PSR-6.
-        $key = $this->keyPrefix . urlencode($class);
+        $key = urlencode($this->keyPrefix . $class);
 
         $item = $this->cache->getItem($key);
         if ($item->isHit()) {
