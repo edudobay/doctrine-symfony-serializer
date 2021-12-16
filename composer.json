@@ -3,10 +3,10 @@
     "type": "library",
     "require": {
         "php": "^8.0",
-        "doctrine/dbal": "^3.2",
+        "doctrine/dbal": "^2.10 || ^3.2",
         "doctrine/event-manager": "^1.1",
         "doctrine/orm": "^2.10",
-        "symfony/serializer": "^6.0"
+        "symfony/serializer": "^5.4 || ^6.0"
     },
     "require-dev": {
         "phpdocumentor/reflection-docblock": "^5.3",
