@@ -8,7 +8,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 
-class Subscriber implements EventSubscriber
+class PersistenceEventSubscriber implements EventSubscriber
 {
     public function __construct(private SerializationHandler $handler)
     {

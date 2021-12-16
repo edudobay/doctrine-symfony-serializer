@@ -10,7 +10,7 @@ use Edudobay\DoctrineSerializable\Examples\Entity\User;
 use Edudobay\DoctrineSerializable\Psr6CacheClassMetadataFactory;
 use Edudobay\DoctrineSerializable\ReflectionClassMetadataFactory;
 use Edudobay\DoctrineSerializable\SerializationHandler;
-use Edudobay\DoctrineSerializable\Subscriber;
+use Edudobay\DoctrineSerializable\PersistenceEventSubscriber;
 
 require_once dirname(__DIR__, 1) . '/vendor/autoload.php';
 
@@ -31,7 +31,7 @@ class Example
             new Psr6CacheClassMetadataFactory($app->cache, new ReflectionClassMetadataFactory())
         );
 
-        $subscriber = new Subscriber($handler);
+        $subscriber = new PersistenceEventSubscriber($handler);
 
         $em->getEventManager()->addEventSubscriber($subscriber);
 
