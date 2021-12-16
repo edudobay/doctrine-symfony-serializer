@@ -14,8 +14,7 @@ class User
     private array|\ArrayObject $_object = [];
 
     public function __construct(
-        #[ORM\Id,
-        ORM\Column]
+        #[ORM\Id, ORM\Column]
         public string $id,
         #[ORM\Column]
         public string $name,
