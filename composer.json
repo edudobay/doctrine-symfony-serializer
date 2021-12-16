@@ -16,13 +16,14 @@
         "symfony/property-info": "^6.0"
     },
     "autoload": {
-        "exclude-from-classmap": ["/tests/", "/src/Examples/"],
+        "exclude-from-classmap": ["/tests/", "/examples/"],
         "psr-4": {
             "Edudobay\\DoctrineSerializable\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "Edudobay\\DoctrineSerializable\\Examples\\": "examples/",
             "Edudobay\\DoctrineSerializable\\Tests\\": "tests/"
         }
     },

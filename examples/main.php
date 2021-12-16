@@ -12,7 +12,7 @@ use Edudobay\DoctrineSerializable\ReflectionClassMetadataFactory;
 use Edudobay\DoctrineSerializable\SerializationHandler;
 use Edudobay\DoctrineSerializable\Subscriber;
 
-require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+require_once dirname(__DIR__, 1) . '/vendor/autoload.php';
 
 class Example
 {

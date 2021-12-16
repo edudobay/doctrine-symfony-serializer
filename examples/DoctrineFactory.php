@@ -24,7 +24,7 @@ class DoctrineFactory
             cache: $cache,
         );
 
-        $config->setMetadataDriverImpl(new AttributeDriver(["$rootPath/src/Examples/Entity"]));
+        $config->setMetadataDriverImpl(new AttributeDriver(["$rootPath/examples/Entity"]));
 
         $connectionParams = [
             'driver' => 'pdo_sqlite',
