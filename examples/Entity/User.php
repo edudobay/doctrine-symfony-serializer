@@ -11,14 +11,16 @@ use Edudobay\DoctrineSerializable\Attributes\Serializable;
 class User
 {
     #[ORM\Column('address', type: 'json')]
-    private array|\ArrayObject $_object = [];
+    private array $_address = [];
 
     public function __construct(
         #[ORM\Id, ORM\Column]
         public string $id,
         #[ORM\Column]
         public string $name,
-        #[Serializable(dbProperty: '_object')]
+        // dbProperty: '_address' is the default (inferred from the property name), but it is
+        // kept here to illustrate.
+        #[Serializable(dbProperty: '_address')]
         public Address $address,
     ) {
     }
