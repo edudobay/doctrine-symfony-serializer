@@ -19,10 +19,7 @@ class SerializationHandler
     ) {
     }
 
-    /**
-     * @param array<string, mixed> $context
-     */
-    public function serialize(object $entity, string $format = null, array $context = []): void
+    public function serialize(object $entity): void
     {
         $metadata = $this->metadataFactory->getClassMetadata($entity::class);
 
@@ -30,13 +27,19 @@ class SerializationHandler
             /** @var mixed $domainValue */
             $domainValue = $mapping->domainProperty->getValue($entity);
 
+            $context = [];
             foreach ($mapping->domainProperty->getAttributes(Context::class) as $item) {
                 /** @var Context $attr */
                 $attr = $item->newInstance();
                 $context = array_merge($context, $attr->getContext(), $attr->getNormalizationContext());
             }
 
-            $dbValue = $this->serializer->normalize($domainValue, $format, $context);
+            $format = $mapping->serializable->format;
+
+            $dbValue = $mapping->serializable->encodeToString ?
+                $this->serializer->serialize($domainValue, $format, $context) :
+                $this->serializer->normalize($domainValue, $format, $context);
+
             $mapping->dbProperty->setValue($entity, $dbValue);
         }
     }
@@ -68,7 +71,6 @@ class SerializationHandler
                 $attr = $item->newInstance();
                 $context = array_merge($context, $attr->getContext(), $attr->getDenormalizationContext());
             }
-
 
             /** @var mixed $domainValue */
             $domainValue = $this->serializer->denormalize(

@@ -24,7 +24,8 @@ class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
             $properties[$property->getName()] = $property;
         }
 
-        $map = [];
+        $builder = new ClassMetadataBuilder();
+
         foreach ($properties as $domainModelPropertyName => $domainModelProperty) {
             foreach ($domainModelProperty->getAttributes(Attributes\Serializable::class) as $attribute) {
                 /** @var Attributes\Serializable $field */
@@ -36,12 +37,16 @@ class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
                 $domainModelProperty->setAccessible(true);
                 $dbMappedProperty->setAccessible(true);
 
-                $map[] = [$domainModelProperty, $dbMappedProperty];
+                $builder->addProperty(
+                    $domainModelProperty,
+                    $field,
+                    $dbMappedProperty
+                );
 
                 break; // ignore duplicated attributes
             }
         }
 
-        return ClassMetadata::fromPairs($map);
+        return $builder->build();
     }
 }
