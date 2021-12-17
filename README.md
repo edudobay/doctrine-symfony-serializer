@@ -1,5 +1,8 @@
 # Mapping fields in Doctrine ORM using Symfony Serializer
 
+[![Version](http://poser.pugx.org/edudobay/doctrine-symfony-serializer/version)](https://packagist.org/packages/edudobay/doctrine-symfony-serializer)
+[![License](http://poser.pugx.org/edudobay/doctrine-symfony-serializer/license)](https://packagist.org/packages/edudobay/doctrine-symfony-serializer)
+
 This is a proof of concept for a mapping fields with [Doctrine ORM][doctrine-orm] so they can be serialized with the [Symfony Serializer component][symfony-serializer], without the need to create a mapping type for each possible data type.
 
 Sometimes you just need to store a complex data type (generally a [Value Object][fowler-value-object]) in a JSON field and not worry about database schemas, extra columns or tables, [Doctrine embeddables][doctrine-orm-embeddables], [custom mappings][doctrine-orm-mapping-types].
