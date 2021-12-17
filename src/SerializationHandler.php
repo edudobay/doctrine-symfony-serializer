@@ -6,7 +6,10 @@ namespace Edudobay\DoctrineSerializable;
 
 use InvalidArgumentException;
 use ReflectionNamedType;
+use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Serializer;
+
+use function array_merge;
 
 class SerializationHandler
 {
@@ -26,6 +29,13 @@ class SerializationHandler
         foreach ($metadata->fields() as $mapping) {
             /** @var mixed $domainValue */
             $domainValue = $mapping->domainProperty->getValue($entity);
+
+            foreach ($mapping->domainProperty->getAttributes(Context::class) as $item) {
+                /** @var Context $attr */
+                $attr = $item->newInstance();
+                $context = array_merge($context, $attr->getContext(), $attr->getNormalizationContext());
+            }
+
             $dbValue = $this->serializer->normalize($domainValue, $format, $context);
             $mapping->dbProperty->setValue($entity, $dbValue);
         }
@@ -52,6 +62,13 @@ class SerializationHandler
             } else {
                 throw new InvalidArgumentException("Not implemented: how to convert $type");
             }
+
+            foreach ($mapping->domainProperty->getAttributes(Context::class) as $item) {
+                /** @var Context $attr */
+                $attr = $item->newInstance();
+                $context = array_merge($context, $attr->getContext(), $attr->getDenormalizationContext());
+            }
+
 
             /** @var mixed $domainValue */
             $domainValue = $this->serializer->denormalize(
