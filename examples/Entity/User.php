@@ -18,9 +18,9 @@ class User
         public string $id,
         #[ORM\Column]
         public string $name,
-        // dbProperty: '_address' is the default (inferred from the property name), but it is
+        // backingProperty: '_address' is the default (inferred from the property name), but it is
         // kept here to illustrate.
-        #[Serializable(dbProperty: '_address')]
+        #[Serializable(backingProperty: '_address')]
         public Address $address,
     ) {
     }

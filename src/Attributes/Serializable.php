@@ -13,7 +13,7 @@ class Serializable
         /**
          * If null, assume '_' + current property name
          */
-        public ?string $dbProperty = null,
+        public ?string $backingProperty = null,
 
         /**
          * @see \Symfony\Component\Serializer\Serializer::serialize() for the meaning of $format

@@ -10,8 +10,14 @@ use ReflectionProperty;
 class FieldMapping
 {
     public function __construct(
+        /**
+         * The property that is an actual part of your domain model — a domain object.
+         */
         public ReflectionProperty $domainProperty,
-        public ReflectionProperty $dbProperty,
+        /**
+         * The backing property that is used only for persistence.
+         */
+        public ReflectionProperty $backingProperty,
         public Serializable $serializable,
     ) {
     }

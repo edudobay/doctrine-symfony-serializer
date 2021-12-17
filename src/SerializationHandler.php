@@ -40,7 +40,7 @@ class SerializationHandler
                 $this->serializer->serialize($domainValue, $format, $context) :
                 $this->serializer->normalize($domainValue, $format, $context);
 
-            $mapping->dbProperty->setValue($entity, $dbValue);
+            $mapping->backingProperty->setValue($entity, $dbValue);
         }
     }
 
@@ -54,7 +54,7 @@ class SerializationHandler
 
         foreach ($metadata->fields() as $mapping) {
             /** @var mixed $dbValue */
-            $dbValue = $mapping->dbProperty->getValue($entity);
+            $dbValue = $mapping->backingProperty->getValue($entity);
 
             $type = $mapping->domainProperty->getType();
             if ($type instanceof ReflectionNamedType) {

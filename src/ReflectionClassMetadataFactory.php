@@ -26,21 +26,21 @@ class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
 
         $builder = new ClassMetadataBuilder();
 
-        foreach ($properties as $domainModelPropertyName => $domainModelProperty) {
-            foreach ($domainModelProperty->getAttributes(Attributes\Serializable::class) as $attribute) {
-                /** @var Attributes\Serializable $field */
-                $field = $attribute->newInstance();
+        foreach ($properties as $domainPropertyName => $domainProperty) {
+            foreach ($domainProperty->getAttributes(Attributes\Serializable::class) as $attribute) {
+                /** @var Attributes\Serializable $serializable */
+                $serializable = $attribute->newInstance();
 
-                $dbMappedPropertyName = $field->dbProperty ?? ('_' . $domainModelPropertyName);
-                $dbMappedProperty = $properties[$dbMappedPropertyName] ?? throw new InvalidArgumentException("Non-existent property: $dbMappedPropertyName");
+                $backingPropertyName = $serializable->backingProperty ?? ('_' . $domainPropertyName);
+                $backingProperty = $properties[$backingPropertyName] ?? throw new InvalidArgumentException("Non-existent property: $backingPropertyName");
 
-                $domainModelProperty->setAccessible(true);
-                $dbMappedProperty->setAccessible(true);
+                $domainProperty->setAccessible(true);
+                $backingProperty->setAccessible(true);
 
                 $builder->addProperty(
-                    $domainModelProperty,
-                    $field,
-                    $dbMappedProperty
+                    $domainProperty,
+                    $serializable,
+                    $backingProperty
                 );
 
                 break; // ignore duplicated attributes

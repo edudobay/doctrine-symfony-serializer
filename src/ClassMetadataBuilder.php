@@ -19,7 +19,7 @@ class ClassMetadataBuilder
     ): self {
         $this->fields[] = new FieldMapping(
             domainProperty: $property,
-            dbProperty: $backingProperty,
+            backingProperty: $backingProperty,
             serializable: $serializable
         );
 
