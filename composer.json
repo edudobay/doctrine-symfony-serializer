@@ -1,6 +1,8 @@
 {
     "name": "edudobay/doctrine-symfony-serializer",
     "type": "library",
+    "homepage": "https://github.com/edudobay/doctrine-symfony-serializer",
+    "license": "MIT",
     "require": {
         "php": "^8.0",
         "doctrine/dbal": "^2.10 || ^3.2",
