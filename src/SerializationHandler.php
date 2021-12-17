@@ -44,10 +44,7 @@ class SerializationHandler
         }
     }
 
-    /**
-     * @param array<string, mixed> $context
-     */
-    public function deserialize(object $entity, string $format = null, array $context = []): void
+    public function deserialize(object $entity): void
     {
         $className = $entity::class;
         $metadata = $this->metadataFactory->getClassMetadata($className);
@@ -66,19 +63,20 @@ class SerializationHandler
                 throw new InvalidArgumentException("Not implemented: how to convert $type");
             }
 
+            $context = [];
             foreach ($mapping->domainProperty->getAttributes(Context::class) as $item) {
                 /** @var Context $attr */
                 $attr = $item->newInstance();
                 $context = array_merge($context, $attr->getContext(), $attr->getDenormalizationContext());
             }
 
+            $format = $mapping->serializable->format;
+
             /** @var mixed $domainValue */
-            $domainValue = $this->serializer->denormalize(
-                $dbValue,
-                $propertyType,
-                $format,
-                $context
-            );
+            $domainValue = $mapping->serializable->encodeToString ?
+                $this->serializer->deserialize($dbValue, $propertyType, $format, $context) :
+                $this->serializer->denormalize($dbValue, $propertyType, $format, $context);
+
             $mapping->domainProperty->setValue($entity, $domainValue);
         }
     }

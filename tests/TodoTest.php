@@ -70,6 +70,16 @@ class TodoTest extends TestCase
         );
     }
 
+    public function test_can_deserialize_JSON_string_instead_of_array(): void
+    {
+        $e = $this->instantiate(EncodesToJsonString::class);
+        $e->_user = '{"username": "mickey42", "fullName": "Mickey Mouse"}';
+
+        $this->handler()->deserialize($e);
+
+        self::assertEquals(new User('mickey42', 'Mickey Mouse'), $e->user);
+    }
+
     public function test_nullable_attributes(): void
     {
         self::markTestIncomplete('TODO');
