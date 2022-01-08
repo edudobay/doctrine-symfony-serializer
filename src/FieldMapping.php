@@ -8,6 +8,9 @@ use Edudobay\DoctrineSerializable\Attributes\Serializable;
 use ReflectionClass;
 use ReflectionProperty;
 
+/**
+ * @psalm-type MethodArray = array{0: class-string, 1: string}
+ */
 class FieldMapping
 {
     public function __construct(
@@ -23,6 +26,7 @@ class FieldMapping
     ) {
     }
 
+    /** @return array<string, mixed> */
     public function __serialize(): array
     {
         return [
@@ -38,6 +42,7 @@ class FieldMapping
         ];
     }
 
+    /** @param array{domainProperty: MethodArray, backingProperty: MethodArray, serializable: Serializable} $data */
     public function __unserialize(array $data): void
     {
         [$class, $property] = $data['domainProperty'];

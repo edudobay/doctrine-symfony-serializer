@@ -43,6 +43,12 @@
             "email": "edudobay@gmail.com"
         }
     ],
+    "scripts": {
+        "lint:phpstan": "phpstan",
+        "lint:psalm": "psalm",
+        "lint:style": "php-cs-fixer fix --dry-run --diff",
+        "test:unit": "phpunit --testdox"
+    },
     "config": {
         "sort-packages": true,
         "allow-plugins": {

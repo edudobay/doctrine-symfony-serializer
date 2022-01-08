@@ -29,5 +29,14 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-interaction
 
-    - name: Run test suite
-      run: vendor/bin/phpunit --testdox
+    - name: Lint - coding style
+      run: composer run lint:style
+
+    - name: Lint - Psalm
+      run: composer run lint:psalm
+
+    - name: Lint - PHPStan
+      run: composer run lint:phpstan
+
+    - name: Tests - Unit
+      run: composer run test:unit
