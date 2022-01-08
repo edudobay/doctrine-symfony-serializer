@@ -1,5 +1,6 @@
 {
     "name": "edudobay/doctrine-symfony-serializer",
+    "description": "Map fields in Doctrine ORM using Symfony Serializer",
     "type": "library",
     "homepage": "https://github.com/edudobay/doctrine-symfony-serializer",
     "license": "MIT",
