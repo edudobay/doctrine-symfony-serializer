@@ -71,10 +71,22 @@ class SerializationHandlerTest extends TestCase
         self::assertEquals(new Entities\User('mickey42', 'Mickey Mouse'), $e->user);
     }
 
-    public function test_nullable_attributes(): void
+    // TODO: What else can we verify about nullable properties?
+    public function test_null_property_is_serialized_to_PHP_null(): void
     {
-        self::markTestIncomplete('TODO');
+        // 1. Set a non-null value
+        $e = new Entities\EntityTwo(name: 'pencil');
+        $this->handler()->serialize($e);
+        self::assertSame('pencil', $e->_name);
+
+        // 2. Set a null value
+        $e->name = null;
+
+        $this->handler()->serialize($e);
+
+        self::assertNull($e->_name);
     }
+
 
     private function handler(): SerializationHandler
     {
