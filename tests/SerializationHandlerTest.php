@@ -10,9 +10,8 @@ use Edudobay\DoctrineSerializable\ReflectionClassMetadataFactory;
 use Edudobay\DoctrineSerializable\SerializationHandler;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
 
-class TodoTest extends TestCase
+class SerializationHandlerTest extends TestCase
 {
     public function test_should_ignore_duplicate_attributes()
     {
