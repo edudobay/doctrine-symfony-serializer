@@ -13,18 +13,13 @@ use ReflectionClass;
 
 class SerializationHandlerTest extends TestCase
 {
-    public function test_should_ignore_duplicate_attributes()
-    {
-        $this->markTestIncomplete('TODO');
-    }
-
     public function test_context_annotation_is_used_in_normalization(): void
     {
         $e = new Entities\EntityOne(timestamp: new DateTimeImmutable('2021-09-29T05:44:31-07:00'));
 
         $this->handler()->serialize($e);
 
-        self::assertEquals('31 44 08 29 09 2021', $e->_timestamp);
+        self::assertSame('31 44 08 29 09 2021', $e->_timestamp);
     }
 
     public function test_context_annotation_is_used_in_denormalization(): void
