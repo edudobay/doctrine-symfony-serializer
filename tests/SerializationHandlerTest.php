@@ -87,6 +87,17 @@ class SerializationHandlerTest extends TestCase
         self::assertNull($e->_name);
     }
 
+    public function test_can_serialize_to_private_backing_property(): void
+    {
+        $user = new Entities\User('ruth@example.com', 'Ruth Davis');
+        $e = new Entities\EntityFour(user: $user);
+        $this->handler()->serialize($e);
+
+        $e->user = new Entities\User('dummy@user.com', 'Should Be Overwritten');
+        $this->handler()->deserialize($e);
+
+        self::assertSame('Ruth Davis', $e->user->fullName);
+    }
 
     private function handler(): SerializationHandler
     {
