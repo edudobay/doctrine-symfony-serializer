@@ -47,9 +47,11 @@ class FieldMapping
     {
         [$class, $property] = $data['domainProperty'];
         $this->domainProperty = (new ReflectionClass($class))->getProperty($property);
+        $this->domainProperty->setAccessible(true);
 
         [$class, $property] = $data['backingProperty'];
         $this->backingProperty = (new ReflectionClass($class))->getProperty($property);
+        $this->backingProperty->setAccessible(true);
 
         $this->serializable = $data['serializable'];
     }
