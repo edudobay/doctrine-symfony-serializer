@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Edudobay\DoctrineSerializable\Tests;
 
 use DateTimeImmutable;
+use DateTimeInterface;
+use Edudobay\DoctrineSerializable\Attributes\Serializable;
 use Edudobay\DoctrineSerializable\Examples\SerializerFactory;
 use Edudobay\DoctrineSerializable\ReflectionClassMetadataFactory;
 use Edudobay\DoctrineSerializable\SerializationHandler;
@@ -169,6 +171,46 @@ class SerializationHandlerTest extends TestCase
         $this->handler()->deserialize($entity);
     }
 
+    public function test_cannot_map_union_types(): void
+    {
+        $entity = new CannotHandleUnion();
+        $entity->union = new DateTimeImmutable();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->handler()->serialize($entity);
+    }
+
+    public function test_cannot_map_builtin_scalar_types(): void
+    {
+        $entity = new CannotHandleBuiltinScalar();
+        $entity->scalar = 'buongiorno';
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->handler()->serialize($entity);
+    }
+
+    public function test_cannot_deserialize_nested_array(): void
+    {
+        $entity = new CannotDeserializeNestedArray();
+        $entity->array = [[new DateTimeImmutable()]];
+
+        $this->handler()->serialize($entity);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->handler()->deserialize($entity);
+    }
+
+    public function test_cannot_deserialize_mixed_array(): void
+    {
+        $entity = new CannotDeserializeArrayOfBuiltin();
+        $entity->array = ['hello'];
+
+        $this->handler()->serialize($entity);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->handler()->deserialize($entity);
+    }
+
     private function handler(): SerializationHandler
     {
         return new SerializationHandler(
@@ -187,4 +229,38 @@ class SerializationHandlerTest extends TestCase
         $reflectionClass = new ReflectionClass($class);
         return $reflectionClass->newInstanceWithoutConstructor();
     }
+}
+
+class CannotHandleUnion
+{
+    public array $_union;
+
+    #[Serializable]
+    public \DateTimeInterface|iterable $union;
+}
+
+class CannotDeserializeNestedArray
+{
+    public array $_array;
+
+    #[Serializable]
+    /** @var DateTimeInterface[][] */
+    public array $array;
+}
+
+class CannotDeserializeArrayOfBuiltin
+{
+    public array $_array;
+
+    #[Serializable]
+    /** @var array<int, string> */
+    public array $array;
+}
+
+class CannotHandleBuiltinScalar
+{
+    public array $_scalar;
+
+    #[Serializable]
+    public string $scalar;
 }

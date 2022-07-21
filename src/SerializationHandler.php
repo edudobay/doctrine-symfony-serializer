@@ -10,6 +10,7 @@ use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Serializer;
 
 use function array_merge;
+use function get_debug_type;
 
 class SerializationHandler
 {
@@ -77,7 +78,10 @@ class SerializationHandler
     {
         $type = $mapping->domainProperty->getType();
         if (! $type instanceof ReflectionNamedType) {
-            throw new InvalidArgumentException("Not implemented: how to convert $type");
+            // This should not be reached in normal conditions - this condition is checked in the ReflectionClassMetadataFactory.
+            // @codeCoverageIgnoreStart
+            throw new InvalidArgumentException("Not implemented: how to convert " . get_debug_type($type));
+            // @codeCoverageIgnoreEnd
         }
 
         $propertyType = $type->getName();
@@ -90,11 +94,6 @@ class SerializationHandler
             }
 
             return $itemType . '[]';
-        }
-
-        // We won't try to deserialize builtin types, only objects
-        if ($type->isBuiltin()) {
-            throw new InvalidArgumentException("Type is builtin: $propertyType");
         }
 
         return $propertyType;

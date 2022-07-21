@@ -6,9 +6,13 @@ namespace Edudobay\DoctrineSerializable;
 
 use InvalidArgumentException;
 use ReflectionClass;
+use ReflectionNamedType;
 use ReflectionProperty;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
+
+use function get_debug_type;
+use function in_array;
 
 class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
 {
@@ -40,8 +44,22 @@ class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
                 $serializable = $attribute->newInstance();
 
                 $domainType = $domainProperty->getType();
+
+                if ($domainType !== null && ! $domainType instanceof ReflectionNamedType) {
+                    throw new InvalidArgumentException(sprintf(
+                        "Type '%s' is not supported",
+                        get_debug_type($domainType)
+                    ));
+                }
+
+                // We won't try to deserialize builtin types, only objects
+                $allowedBuiltInTypes = ['array'];
+                if ($domainType?->isBuiltin() && ! in_array($domainType->getName(), $allowedBuiltInTypes, true)) {
+                    throw new InvalidArgumentException("Type is builtin: {$domainType->getName()}, ");
+                }
+
                 // Arrays: If item type was not explicitly given, try to extract it from docblock
-                if ($domainType !== null && $domainType->getName() === 'array' && ! $serializable->arrayItemType) {
+                if ($domainType?->getName() === 'array' && ! $serializable->arrayItemType) {
                     $serializable->arrayItemType = $this->getArrayItemType($class, $domainProperty);
                 }
 
@@ -76,17 +94,21 @@ class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
         foreach ($types as $type) {
             $collectionValueTypes = $type->getCollectionValueTypes();
             foreach ($collectionValueTypes as $itemType) {
-                if ($itemType->getBuiltinType() !== 'object') {
-                    continue;
-                }
 
                 if ($itemType->isCollection()) {
                     continue; // Nested collection types are currently not supported
                 }
 
+                if ($itemType->getBuiltinType() !== 'object') {
+                    continue;
+                }
+
                 $itemClass = $itemType->getClassName();
                 if (! $itemClass) {
+                    // Should not happen if getBuiltinType() === 'object'
+                    // @codeCoverageIgnoreStart
                     continue;
+                    // @codeCoverageIgnoreEnd
                 }
 
                 return $itemClass;
