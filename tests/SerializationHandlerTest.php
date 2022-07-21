@@ -80,16 +80,16 @@ class SerializationHandlerTest extends TestCase
     public function test_null_property_is_serialized_to_PHP_null(): void
     {
         // 1. Set a non-null value
-        $e = new Entities\EntityTwo(name: 'pencil');
+        $e = new Entities\EntityTwo(element: new Entities\Element('pencil'));
         $this->handler()->serialize($e);
-        self::assertSame('pencil', $e->_name);
+        self::assertSame(['name' => 'pencil'], $e->_element);
 
         // 2. Set a null value
-        $e->name = null;
+        $e->element = null;
 
         $this->handler()->serialize($e);
 
-        self::assertNull($e->_name);
+        self::assertNull($e->_element);
     }
 
     public function test_can_serialize_to_private_backing_property(): void

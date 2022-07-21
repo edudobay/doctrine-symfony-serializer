@@ -10,9 +10,16 @@ class EntityTwo
 {
     public function __construct(
         #[Serializable]
-        public ?string $name
+        public ?Element $element
     ) {
     }
 
-    public ?string $_name;
+    public ?array $_element;
+}
+
+class Element
+{
+    public function __construct(public ?string $name)
+    {
+    }
 }
