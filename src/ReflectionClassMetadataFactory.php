@@ -94,7 +94,6 @@ class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
         foreach ($types as $type) {
             $collectionValueTypes = $type->getCollectionValueTypes();
             foreach ($collectionValueTypes as $itemType) {
-
                 if ($itemType->isCollection()) {
                     continue; // Nested collection types are currently not supported
                 }
