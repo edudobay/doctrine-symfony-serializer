@@ -27,6 +27,13 @@ class Serializable
          * TODO: Explain this difference, especially the raw string vs. JSON string part.
          */
         public bool $encodeToString = false,
+
+        /**
+         * If present, the property is an array and each item is an object of this class.
+         *
+         * @var class-string|null
+         */
+        public ?string $arrayItemType = null,
     ) {
     }
 }

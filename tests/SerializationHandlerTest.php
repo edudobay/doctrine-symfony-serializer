@@ -8,6 +8,10 @@ use DateTimeImmutable;
 use Edudobay\DoctrineSerializable\Examples\SerializerFactory;
 use Edudobay\DoctrineSerializable\ReflectionClassMetadataFactory;
 use Edudobay\DoctrineSerializable\SerializationHandler;
+use Edudobay\DoctrineSerializable\Tests\Entities\EntityWithArrayProp;
+use Edudobay\DoctrineSerializable\Tests\Entities\EntityWithArrayPropButNoType;
+use Edudobay\DoctrineSerializable\Tests\Entities\Rating;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -97,6 +101,56 @@ class SerializationHandlerTest extends TestCase
         $this->handler()->deserialize($e);
 
         self::assertSame('Ruth Davis', $e->user->fullName);
+    }
+
+    public function test_can_serialize_array_of_objects_with_arrayItemType_attribute(): void
+    {
+        $entity = new EntityWithArrayProp([
+            new Rating(5, 'Speed'),
+            new Rating(3, 'Design'),
+            new Rating(4, 'Cost'),
+        ]);
+
+        $this->handler()->serialize($entity);
+
+        self::assertEquals(
+            [
+                ['score' => 5, 'category' => 'Speed'],
+                ['score' => 3, 'category' => 'Design'],
+                ['score' => 4, 'category' => 'Cost']
+            ],
+            $entity->_ratings
+        );
+    }
+
+    public function test_can_deserialize_to_array_of_objects_with_arrayItemType_attribute(): void
+    {
+        $entity = new EntityWithArrayProp(ratings: []);
+
+        $entity->_ratings = [
+            ['score' => 2, 'category' => 'Simplicity'],
+        ];
+
+        $this->handler()->deserialize($entity);
+
+        self::assertEquals(
+            [new Rating(2, 'Simplicity')],
+            $entity->ratings
+        );
+    }
+
+    public function test_cannot_deserialize_array_of_objects_without_arrayItemType_attribute(): void
+    {
+        $entity = new EntityWithArrayPropButNoType([
+            new Rating(5, 'Speed'),
+            new Rating(3, 'Design'),
+            new Rating(4, 'Cost'),
+        ]);
+
+        $this->handler()->serialize($entity);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->handler()->deserialize($entity);
     }
 
     private function handler(): SerializationHandler

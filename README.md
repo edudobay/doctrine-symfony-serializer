@@ -56,6 +56,12 @@ class User
     // The actual domain object
     #[Serializable]
     public Address $address;
+
+    // For arrays:
+    #[ORM\Column('badges', type: 'json')]
+    private array $_badges = [];
+    #[Serializable(arrayItemType: Badge::class)
+    public array $badges;
 }
 ```
 

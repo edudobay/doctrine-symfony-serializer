@@ -53,15 +53,7 @@ class SerializationHandler
             /** @var mixed $dbValue */
             $dbValue = $mapping->backingProperty->getValue($entity);
 
-            $type = $mapping->domainProperty->getType();
-            if ($type instanceof ReflectionNamedType) {
-                $propertyType = $type->getName();
-                if ($type->isBuiltin()) {
-                    throw new InvalidArgumentException("Type is builtin: $propertyType");
-                }
-            } else {
-                throw new InvalidArgumentException("Not implemented: how to convert $type");
-            }
+            $propertyType = $this->getPropertyType($mapping);
 
             $context = [];
             foreach ($mapping->domainProperty->getAttributes(Context::class) as $item) {
@@ -79,5 +71,32 @@ class SerializationHandler
 
             $mapping->domainProperty->setValue($entity, $domainValue);
         }
+    }
+
+    private function getPropertyType(FieldMapping $mapping): string
+    {
+        $type = $mapping->domainProperty->getType();
+        if (! $type instanceof ReflectionNamedType) {
+            throw new InvalidArgumentException("Not implemented: how to convert $type");
+        }
+
+        $propertyType = $type->getName();
+
+        // Handle array types
+        if ($type->getName() === 'array') {
+            $itemType = $mapping->serializable->arrayItemType;
+            if (! $itemType) {
+                throw new InvalidArgumentException("For array types, 'arrayItemType' is required");
+            }
+
+            return $itemType . '[]';
+        }
+
+        // We won't try to deserialize builtin types, only objects
+        if ($type->isBuiltin()) {
+            throw new InvalidArgumentException("Type is builtin: $propertyType");
+        }
+
+        return $propertyType;
     }
 }
