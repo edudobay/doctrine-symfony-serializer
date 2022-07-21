@@ -60,7 +60,13 @@ class User
     // For arrays:
     #[ORM\Column('badges', type: 'json')]
     private array $_badges = [];
-    #[Serializable(arrayItemType: Badge::class)
+
+    #[Serializable]
+    /** @var Badge[] */
+    public array $badges;
+
+    // OPTIONAL: use arrayItemType instead of docblock array types
+    #[Serializable(arrayItemType: Badge::class)]
     public array $badges;
 }
 ```

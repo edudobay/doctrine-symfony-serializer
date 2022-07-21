@@ -6,13 +6,10 @@ namespace Edudobay\DoctrineSerializable\Tests\Entities;
 
 use Edudobay\DoctrineSerializable\Attributes\Serializable;
 
-class EntityWithArrayPropButNoType
+class EntityWithUntypedArrayProp
 {
     public array $_ratings;
 
-    /**
-     * @param Rating[] $ratings
-     */
     public function __construct(
         #[Serializable]
         public array $ratings,

@@ -8,8 +8,9 @@ use DateTimeImmutable;
 use Edudobay\DoctrineSerializable\Examples\SerializerFactory;
 use Edudobay\DoctrineSerializable\ReflectionClassMetadataFactory;
 use Edudobay\DoctrineSerializable\SerializationHandler;
+use Edudobay\DoctrineSerializable\Tests\Entities\EntityWithArrayHintedProp;
 use Edudobay\DoctrineSerializable\Tests\Entities\EntityWithArrayProp;
-use Edudobay\DoctrineSerializable\Tests\Entities\EntityWithArrayPropButNoType;
+use Edudobay\DoctrineSerializable\Tests\Entities\EntityWithUntypedArrayProp;
 use Edudobay\DoctrineSerializable\Tests\Entities\Rating;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -139,9 +140,24 @@ class SerializationHandlerTest extends TestCase
         );
     }
 
-    public function test_cannot_deserialize_array_of_objects_without_arrayItemType_attribute(): void
+    public function test_can_deserialize_array_of_objects_with_docblock_type(): void
     {
-        $entity = new EntityWithArrayPropButNoType([
+        $entity = new EntityWithArrayHintedProp([
+            new Rating(5, 'Speed'),
+            new Rating(3, 'Design'),
+            new Rating(4, 'Cost'),
+        ]);
+
+        $this->handler()->serialize($entity);
+
+        $this->handler()->deserialize($entity);
+
+        self::assertContainsOnlyInstancesOf(Rating::class, $entity->ratings);
+    }
+
+    public function test_cannot_deserialize_array_of_objects_without_any_type_hint(): void
+    {
+        $entity = new EntityWithUntypedArrayProp([
             new Rating(5, 'Speed'),
             new Rating(3, 'Design'),
             new Rating(4, 'Cost'),
