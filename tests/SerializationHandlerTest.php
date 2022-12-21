@@ -16,6 +16,7 @@ use Edudobay\DoctrineSerializable\Tests\Entities\EntityWithUntypedArrayProp;
 use Edudobay\DoctrineSerializable\Tests\Entities\Rating;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Reflection;
 use ReflectionClass;
 
 class SerializationHandlerTest extends TestCase
@@ -78,7 +79,6 @@ class SerializationHandlerTest extends TestCase
         self::assertEquals(new Entities\User('mickey42', 'Mickey Mouse'), $e->user);
     }
 
-    // TODO: What else can we verify about nullable properties?
     public function test_null_property_is_serialized_to_PHP_null(): void
     {
         // 1. Set a non-null value
@@ -92,6 +92,16 @@ class SerializationHandlerTest extends TestCase
         $this->handler()->serialize($e);
 
         self::assertNull($e->_element);
+    }
+
+    public function test_null_property_can_be_deserialized(): void
+    {
+        $class = new ReflectionClass(Entities\EntityTwo::class);
+        $e = $class->newInstanceWithoutConstructor();
+        $e->_element = null;
+
+        $this->handler()->deserialize($e);
+        self::assertNull($e->element);
     }
 
     public function test_can_serialize_to_private_backing_property(): void

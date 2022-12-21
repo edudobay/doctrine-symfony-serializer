@@ -63,12 +63,16 @@ class SerializationHandler
                 $context = array_merge($context, $attr->getContext(), $attr->getDenormalizationContext());
             }
 
-            $format = $mapping->serializable->format;
+            if ($mapping->domainProperty->getType()->allowsNull() && $dbValue === null) {
+                $domainValue = null;
+            } else {
+                $format = $mapping->serializable->format;
 
-            /** @var mixed $domainValue */
-            $domainValue = $mapping->serializable->encodeToString ?
-                $this->serializer->deserialize($dbValue, $propertyType, $format, $context) :
-                $this->serializer->denormalize($dbValue, $propertyType, $format, $context);
+                /** @var mixed $domainValue */
+                $domainValue = $mapping->serializable->encodeToString ?
+                    $this->serializer->deserialize($dbValue, $propertyType, $format, $context) :
+                    $this->serializer->denormalize($dbValue, $propertyType, $format, $context);
+            }
 
             $mapping->domainProperty->setValue($entity, $domainValue);
         }
