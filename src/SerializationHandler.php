@@ -7,15 +7,14 @@ namespace Edudobay\DoctrineSerializable;
 use InvalidArgumentException;
 use ReflectionNamedType;
 use Symfony\Component\Serializer\Annotation\Context;
-use Symfony\Component\Serializer\Serializer;
-
+use Symfony\Component\Serializer\SerializerInterface;
 use function array_merge;
 use function get_debug_type;
 
 class SerializationHandler
 {
     public function __construct(
-        private Serializer $serializer,
+        private SerializerInterface $serializer,
         private ClassMetadataFactoryInterface $metadataFactory
     ) {
     }
