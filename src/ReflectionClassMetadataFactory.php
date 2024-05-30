@@ -84,7 +84,10 @@ class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
         return $builder->build();
     }
 
-    /** @return null|class-string */
+    /**
+     * @param ReflectionClass<object> $class
+     * @return null|class-string
+     */
     private function getArrayItemType(ReflectionClass $class, ReflectionProperty $property): ?string
     {
         $types = $this->propertyTypeExtractor->getTypes($class->getName(), $property->getName());
