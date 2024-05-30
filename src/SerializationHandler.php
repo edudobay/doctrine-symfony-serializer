@@ -56,6 +56,17 @@ class SerializationHandler
 
             $propertyType = $this->getPropertyType($mapping);
 
+            $domainPropertyType = $mapping->domainProperty->getType();
+            if ($domainPropertyType === null) {
+                // This should not be reached in normal conditions - this condition is checked in the ReflectionClassMetadataFactory.
+                // @codeCoverageIgnoreStart
+                throw new InvalidArgumentException(sprintf(
+                    "Not implemented: property '%s' has no type",
+                    $mapping->domainProperty->name,
+                ));
+                // @codeCoverageIgnoreEnd
+            }
+
             $context = [];
             foreach ($mapping->domainProperty->getAttributes(Context::class) as $item) {
                 /** @var Context $attr */
@@ -63,7 +74,8 @@ class SerializationHandler
                 $context = array_merge($context, $attr->getContext(), $attr->getDenormalizationContext());
             }
 
-            if ($mapping->domainProperty->getType()->allowsNull() && $dbValue === null) {
+
+            if ($domainPropertyType->allowsNull() && $dbValue === null) {
                 $domainValue = null;
             } else {
                 $format = $mapping->serializable->format;

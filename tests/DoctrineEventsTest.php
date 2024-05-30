@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Edudobay\DoctrineSerializable\Tests;
 
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMSetup;
@@ -34,7 +35,9 @@ class DoctrineEventsTest extends TestCase
             'path' => ":memory:",
         ];
 
-        $this->entityManager = EntityManager::create($connectionParams, $config);
+        $connection = DriverManager::getConnection($connectionParams);
+
+        $this->entityManager = new EntityManager($connection, $config);
         // Create tables in the test database
         (new SchemaTool($this->entityManager))->createSchema([
             $this->entityManager->getClassMetadata(Product::class),

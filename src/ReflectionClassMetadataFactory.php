@@ -16,9 +16,11 @@ use function in_array;
 
 class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
 {
-    public function __construct(private ?PropertyTypeExtractorInterface $propertyTypeExtractor = null)
+    private PropertyTypeExtractorInterface $propertyTypeExtractor;
+
+    public function __construct(?PropertyTypeExtractorInterface $propertyTypeExtractor = null)
     {
-        $this->propertyTypeExtractor ??= new PhpDocExtractor();
+        $this->propertyTypeExtractor = $propertyTypeExtractor ?? new PhpDocExtractor();
     }
 
     public function getClassMetadata(string $class): ClassMetadata
@@ -82,6 +84,7 @@ class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
         return $builder->build();
     }
 
+    /** @return null|class-string */
     private function getArrayItemType(ReflectionClass $class, ReflectionProperty $property): ?string
     {
         $types = $this->propertyTypeExtractor->getTypes($class->getName(), $property->getName());
@@ -103,13 +106,14 @@ class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
                 }
 
                 $itemClass = $itemType->getClassName();
-                if (! $itemClass) {
+                if ($itemClass === null || $itemClass === '') {
                     // Should not happen if getBuiltinType() === 'object'
                     // @codeCoverageIgnoreStart
                     continue;
                     // @codeCoverageIgnoreEnd
                 }
 
+                /** @var class-string $itemClass */
                 return $itemClass;
             }
         }

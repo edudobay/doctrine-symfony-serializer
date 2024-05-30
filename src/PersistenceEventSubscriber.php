@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Edudobay\DoctrineSerializable;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostLoadEventArgs;
+use Doctrine\ORM\Event\PostPersistEventArgs;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 
 class PersistenceEventSubscriber implements EventSubscriber
@@ -14,29 +18,29 @@ class PersistenceEventSubscriber implements EventSubscriber
     {
     }
 
-    public function preUpdate(LifecycleEventArgs $args): void
+    public function preUpdate(PreUpdateEventArgs $args): void
     {
-        $this->handler->serialize($args->getEntity());
+        $this->handler->serialize($args->getObject());
     }
 
-    public function prePersist(LifecycleEventArgs $args): void
+    public function prePersist(PrePersistEventArgs $args): void
     {
-        $this->handler->serialize($args->getEntity());
+        $this->handler->serialize($args->getObject());
     }
 
-    public function postUpdate(LifecycleEventArgs $args): void
+    public function postUpdate(PostUpdateEventArgs $args): void
     {
-        $this->handler->deserialize($args->getEntity());
+        $this->handler->deserialize($args->getObject());
     }
 
-    public function postPersist(LifecycleEventArgs $args): void
+    public function postPersist(PostPersistEventArgs $args): void
     {
-        $this->handler->deserialize($args->getEntity());
+        $this->handler->deserialize($args->getObject());
     }
 
-    public function postLoad(LifecycleEventArgs $args): void
+    public function postLoad(PostLoadEventArgs $args): void
     {
-        $this->handler->deserialize($args->getEntity());
+        $this->handler->deserialize($args->getObject());
     }
 
     public function getSubscribedEvents(): array
