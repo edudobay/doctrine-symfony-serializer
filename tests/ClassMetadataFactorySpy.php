@@ -15,6 +15,11 @@ class ClassMetadataFactorySpy implements ClassMetadataFactoryInterface
     {
     }
 
+    public function reset(): void
+    {
+        $this->timesCalled = 0;
+    }
+
     public function getClassMetadata(string $class): ClassMetadata
     {
         $this->timesCalled++;

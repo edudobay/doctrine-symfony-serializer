@@ -11,9 +11,26 @@ use Edudobay\DoctrineSerializable\SerializationHandler;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Filesystem\Filesystem;
 
 class Psr6CacheClassMetadataFactoryTest extends TestCase
 {
+    private string $cacheDir;
+    private Filesystem $fs;
+
+    public function setUp(): void
+    {
+        $this->cacheDir = sys_get_temp_dir() . '/phpunit-doctrine-serializable';
+        $this->fs = new Filesystem();
+        $this->fs->remove($this->cacheDir);
+        $this->fs->mkdir($this->cacheDir);
+    }
+
+    public function tearDown(): void
+    {
+        $this->fs->remove($this->cacheDir);
+    }
+
     public function test_cache_passes_through()
     {
         $factorySpy = new ClassMetadataFactorySpy(new ReflectionClassMetadataFactory());
@@ -29,24 +46,19 @@ class Psr6CacheClassMetadataFactoryTest extends TestCase
 
         $factory->getClassMetadata(Entities\EntityOne::class);
         self::assertSame(1, $factorySpy->timesCalled);
-    }
 
-    public function pre_test_store_serialized_metadata()
-    {
-        $cache = new FilesystemAdapter(directory: __DIR__ . '/cache');
-        $factorySpy = new ClassMetadataFactorySpy(new ReflectionClassMetadataFactory());
-        $factory = new Psr6CacheClassMetadataFactory($cache, $factorySpy);
-
-        $metadata = $factory->getClassMetadata(Entities\EntityThree::class);
-
-        $this->fail('This is not a test — it just prepares the cache.');
+        $factory->getClassMetadata(Entities\User::class);
+        self::assertSame(2, $factorySpy->timesCalled);
     }
 
     public function test_get_serialized_metadata()
     {
-        $cache = new FilesystemAdapter(directory: __DIR__ . '/cache');
+        $cache = new FilesystemAdapter(directory: $this->cacheDir);
         $factorySpy = new ClassMetadataFactorySpy(new ReflectionClassMetadataFactory());
         $factory = new Psr6CacheClassMetadataFactory($cache, $factorySpy);
+
+        $factory->getClassMetadata(Entities\EntityThree::class);
+        $factorySpy->reset();
 
         $metadata = $factory->getClassMetadata(Entities\EntityThree::class);
 
@@ -55,9 +67,13 @@ class Psr6CacheClassMetadataFactoryTest extends TestCase
 
     public function test_can_serialize_to_private_backing_property(): void
     {
-        $cache = new FilesystemAdapter(directory: __DIR__ . '/cache');
+        $cache = new FilesystemAdapter(directory: $this->cacheDir);
         $factorySpy = new ClassMetadataFactorySpy(new ReflectionClassMetadataFactory());
         $factory = new Psr6CacheClassMetadataFactory($cache, $factorySpy);
+
+        $factory->getClassMetadata(Entities\EntityThree::class);
+        $factory->getClassMetadata(Entities\User::class);
+        $factorySpy->reset();
 
         $handler = new SerializationHandler(SerializerFactory::serializer(), $factory);
 
