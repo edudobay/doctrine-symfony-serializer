@@ -10,6 +10,10 @@ use ReflectionNamedType;
 use ReflectionProperty;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
+use Symfony\Component\TypeInfo\Type\CollectionType;
+use Symfony\Component\TypeInfo\Type\NullableType;
+use Symfony\Component\TypeInfo\Type\ObjectType;
+use Symfony\Component\TypeInfo\Type\UnionType;
 
 use function get_debug_type;
 use function in_array;
@@ -90,35 +94,38 @@ class ReflectionClassMetadataFactory implements ClassMetadataFactoryInterface
      */
     private function getArrayItemType(ReflectionClass $class, ReflectionProperty $property): ?string
     {
-        $types = $this->propertyTypeExtractor->getTypes($class->getName(), $property->getName());
+        $type = $this->propertyTypeExtractor->getType($class->getName(), $property->getName());
 
-        if ($types === null) {
+        if ($type === null) {
             // Unable to determine type
             return null;
         }
 
-        foreach ($types as $type) {
-            $collectionValueTypes = $type->getCollectionValueTypes();
-            foreach ($collectionValueTypes as $itemType) {
-                if ($itemType->isCollection()) {
-                    continue; // Nested collection types are currently not supported
-                }
+        $candidates = $type instanceof UnionType ? $type->getTypes() : [$type];
 
-                if ($itemType->getBuiltinType() !== 'object') {
-                    continue;
-                }
-
-                $itemClass = $itemType->getClassName();
-                if ($itemClass === null || $itemClass === '') {
-                    // Should not happen if getBuiltinType() === 'object'
-                    // @codeCoverageIgnoreStart
-                    continue;
-                    // @codeCoverageIgnoreEnd
-                }
-
-                /** @var class-string $itemClass */
-                return $itemClass;
+        foreach ($candidates as $candidate) {
+            if (! $candidate instanceof CollectionType) {
+                continue;
             }
+
+            $valueType = $candidate->getCollectionValueType();
+
+            if ($valueType instanceof NullableType) {
+                $valueType = $valueType->getWrappedType();
+            }
+
+            if ($valueType instanceof CollectionType) {
+                continue; // Nested collection types are currently not supported
+            }
+
+            if (! $valueType instanceof ObjectType) {
+                continue;
+            }
+
+            $itemClass = $valueType->getClassName();
+
+            /** @var class-string $itemClass */
+            return $itemClass;
         }
 
         // Unable to determine type

@@ -6,7 +6,7 @@ namespace Edudobay\DoctrineSerializable\Tests\Entities;
 
 use DateTimeImmutable;
 use Edudobay\DoctrineSerializable\Attributes\Serializable;
-use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 class EntityOne

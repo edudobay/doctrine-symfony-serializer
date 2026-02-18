@@ -6,7 +6,7 @@ namespace Edudobay\DoctrineSerializable;
 
 use InvalidArgumentException;
 use ReflectionNamedType;
-use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Serializer;
 
 use function array_merge;
